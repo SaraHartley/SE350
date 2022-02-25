@@ -60,6 +60,7 @@ const SignInScreen = ({navigation}) => {
                   title="LOGIN"
                   disabled={!isValid} 
                 />
+                    
                 <Button
                   title="Go to SignUp screen"
                   onPress={()=> navigation.navigate("SignUp")}
