@@ -1,3 +1,4 @@
+
 //template from https://blog.logrocket.com/react-native-form-validations-with-formik-and-yup/ and Youtube Channel "Pradip Debnath"
 //SignInScreen.js
 import React from 'react'
@@ -27,7 +28,8 @@ const SignInScreen = ({navigation}) => {
           <Formik
             validationSchema={loginValidationSchema}
             initialValues={{ email: '', password: '' }}
-            onSubmit={values => console.log(values)}
+            //onSubmit={values => console.log(values)}
+            onSubmit={() => navigation.navigate("Welcome")}
           >
             {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid, }) => (
               <>
@@ -60,7 +62,6 @@ const SignInScreen = ({navigation}) => {
                   title="LOGIN"
                   disabled={!isValid} 
                 />
-                    
                 <Button
                   title="Go to SignUp screen"
                   onPress={()=> navigation.navigate("SignUp")}
