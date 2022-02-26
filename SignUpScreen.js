@@ -19,56 +19,80 @@ const SignUpScreen = ({navigation}) => {
     <>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView style={styles.container}>
-      <Text>Sign Up Screen</Text>
+        <View style={styles.signupContainer}>
 
-<Formik
-    validationSchema={signUpValidationSchema}
-    initialValues={{
-        email: '',
-        password: '',
-        confirmPassword: '',
-  }}
-  onSubmit={values => console.log(values)}
->
-  {({ handleSubmit, isValid }) => (
-    <>
-      
-      <Field
-        component={CustomInput}
-        name="email"
-        placeholder="Email Address"
-        keyboardType="email-address"
-      />
-      <Field
-        component={CustomInput}
-        name="passowrd"
-        placeholder="Password"
-        secureTextEntry
-      />
-      <Field
-        component={CustomInput}
-        name="confirmPassword"
-        placeholder="Confirm Password"
-        secureTextEntry
-      />
+        <Text>Sign Up Screen</Text>
 
-      <Button
-        onPress={handleSubmit}
-        title="SIGN UP"
-        disabled={!isValid}
-      />
-      <Button
-        title="Go to SignIn screen"
-        onPress={()=> navigation.navigate("SignIn")}
-      />
-    </>
-  )}
-</Formik>
+        <Formik
+            validationSchema={signUpValidationSchema}
+            initialValues={{fullName: '', email: '', password: '',}}
+            //onSubmit={values => console.log(values)}
+            onSubmit={() => navigation.navigate("SignIn")}
+
+        >
+          {({  handleChange, handleBlur, handleSubmit, values, errors, touched, isValid, }) => (
+            <>
+              
+              <TextInput
+                //component={CustomInput}
+                name="fullName"
+                placeholder="Full Name"
+                style={styles.textInput}
+                onChangeText={handleChange('fullName')}
+                onBlur={handleBlur('fullName')}
+                value={values.fullName}
+                //keyboardType="email-address"
+              />
+              {(errors.fullName && touched.fullName) &&
+                  <Text style={styles.errorText}>{errors.fullName}</Text>
+                }
+              <TextInput
+                  name="email"
+                  placeholder="Email Address"
+                  style={styles.textInput}
+                  onChangeText={handleChange('email')}
+                  onBlur={handleBlur('email')}
+                  value={values.email}
+                  keyboardType="email-address"
+                />
+                {(errors.email && touched.email) &&
+                  <Text style={styles.errorText}>{errors.email}</Text>
+                }
+              <TextInput
+                  name="password"
+                  placeholder="Password"
+                  style={styles.textInput}
+                  onChangeText={handleChange('password')}
+                  onBlur={handleBlur('password')}
+                  value={values.password}
+                  secureTextEntry
+                />
+                {(errors.password && touched.password) &&
+                  <Text style={styles.errorText}>{errors.password}</Text>
+                }
+
+              <Button
+                onPress={handleSubmit}
+                title="SIGN UP"
+                disabled={!isValid}
+              />
+              <Button
+                title="Go to SignIn screen"
+                onPress={()=> navigation.navigate("SignIn")}
+              />
+            </>
+          )}
+        </Formik>
+        </View>
       </SafeAreaView>
     </>
   )
 }
 const signUpValidationSchema = yup.object().shape({
+    fullName: yup
+      .string()
+      .matches(/(\w.+\s).+/, 'Enter at least 2 names')
+      .required('Full name is required'),
     email: yup
       .string()
       .email("Please enter valid email")
@@ -81,10 +105,6 @@ const signUpValidationSchema = yup.object().shape({
       .matches(/[!@#$%^&*()\-_"=+{}; :,<.>]/, "Password must have a special character")
       .min(8, ({ min }) => `Password must be at least ${min} characters`)
       .required('Password is required'),
-    confirmPassword: yup
-      .string()
-      .oneOf([yup.ref('password')], 'Passwords do not match')
-      .required('Confirm password is required'),
   })
 
 const styles = StyleSheet.create({
@@ -100,6 +120,19 @@ const styles = StyleSheet.create({
     padding: 10,
     elevation: 10,
     backgroundColor: '#e6e6e6'
+  },
+  textInput: {
+    height: 40,
+    width: '100%',
+    margin: 10,
+    backgroundColor: 'white',
+    borderColor: 'gray',
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 10,
+  },
+  errorText: {
+    fontSize: 10,
+    color: 'red',
   },
 })
 export default SignUpScreen
