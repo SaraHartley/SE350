@@ -1,5 +1,6 @@
 //template from https://blog.logrocket.com/react-native-form-validations-with-formik-and-yup/ and Youtube Channel "Pradip Debnath"
 //CustomInput.js
+//This file is not needed anymore
 import React from 'react'
 import { Text, TextInput, StyleSheet } from 'react-native'
 
