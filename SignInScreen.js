@@ -1,4 +1,3 @@
-
 //template from https://blog.logrocket.com/react-native-form-validations-with-formik-and-yup/ and Youtube Channel "Pradip Debnath"
 //SignInScreen.js
 import React from 'react'
