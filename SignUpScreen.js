@@ -9,6 +9,8 @@ import {
   StatusBar,
   TextInput,
   Button,
+  Image,
+  TouchableOpacity
 } from 'react-native'
 import { Formik, Field } from 'formik'
 import * as yup from 'yup'
@@ -18,6 +20,8 @@ const SignUpScreen = ({navigation}) => {
     <>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView style={styles.container}>
+      <Image source={require('./assets/se350logo.jpg')} style ={{width:150, height:150}} />
+        <Text style={{fontSize:40}}>Rorr</Text>
         <View style={styles.signupContainer}>
 
         <Text>Sign Up Screen</Text>
@@ -69,16 +73,23 @@ const SignUpScreen = ({navigation}) => {
                 {(errors.password && touched.password) &&
                   <Text style={styles.errorText}>{errors.password}</Text>
                 }
-
+              <TouchableOpacity style = {{margin:5}}>
               <Button
+                color="#ffa500"
                 onPress={handleSubmit}
                 title="SIGN UP"
                 disabled={!isValid}
               />
+              </TouchableOpacity>
+
+              <TouchableOpacity style = {{margin:5}}>
               <Button
+                color="#ffa500"
                 title="Go to SignIn screen"
                 onPress={()=> navigation.navigate("SignIn")}
               />
+              </TouchableOpacity>
+
             </>
           )}
         </Formik>
@@ -111,6 +122,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'darkgray',
+
   },
   signupContainer: {
     width: '80%',
