@@ -1,91 +1,42 @@
-// SignUpScreen.js
 //template from https://blog.logrocket.com/react-native-form-validations-with-formik-and-yup/ and Youtube Channel "Pradip Debnath"
+// App.js
+//template from https://blog.logrocket.com/react-native-form-validations-with-formik-and-yup/
 import React from 'react'
+import { Formik } from 'formik'
+import * as yup from 'yup'
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
   SafeAreaView,
   StyleSheet,
+  ScrollView,
   View,
   Text,
   StatusBar,
   TextInput,
-  Button,
-} from 'react-native'
-import { Formik, Field } from 'formik'
-import * as yup from 'yup'
-import CustomInput from './CustomInput'
+  Button
+} from 'react-native';
+import RootStackScreen from './RootStackScreen';
+import SignInScreen from './SignInScreen';
+import SignUpScreen from './SignUpScreen';
+import WelcomeScreen from './WelcomeScreen';
 
-const SignUpScreen = ({navigation}) => {
+const Stack = createNativeStackNavigator();
+
+const App = () => {
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView style={styles.container}>
-      <Text>Sign Up Screen</Text>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="SignIn" component={SignInScreen} />
+        <Stack.Screen name="SignUp" component={SignUpScreen} />
+        <Stack.Screen name="Welcome" component={WelcomeScreen} />
 
-<Formik
-    validationSchema={signUpValidationSchema}
-    initialValues={{
-        email: '',
-        password: '',
-        confirmPassword: '',
-  }}
-  onSubmit={values => console.log(values)}
->
-  {({ handleSubmit, isValid }) => (
-    <>
-      
-      <Field
-        component={CustomInput}
-        name="email"
-        placeholder="Email Address"
-        keyboardType="email-address"
-      />
-      <Field
-        component={CustomInput}
-        name="passowrd"
-        placeholder="Password"
-        secureTextEntry
-      />
-      <Field
-        component={CustomInput}
-        name="confirmPassword"
-        placeholder="Confirm Password"
-        secureTextEntry
-      />
-
-      <Button
-        onPress={handleSubmit}
-        title="SIGN UP"
-        disabled={!isValid}
-      />
-      <Button
-        title="Go to SignIn screen"
-        onPress={()=> navigation.navigate("SignIn")}
-      />
-    </>
-  )}
-</Formik>
-      </SafeAreaView>
-    </>
-  )
+      </Stack.Navigator>
+    </NavigationContainer>
+    
+  );
 }
-const signUpValidationSchema = yup.object().shape({
-    email: yup
-      .string()
-      .email("Please enter valid email")
-      .required('Email is required'),
-    password: yup
-      .string()
-      .matches(/\w*[a-z]\w*/,  "Password must have a small letter")
-      .matches(/\w*[A-Z]\w*/,  "Password must have a capital letter")
-      .matches(/\d/, "Password must have a number")
-      .matches(/[!@#$%^&*()\-_"=+{}; :,<.>]/, "Password must have a special character")
-      .min(8, ({ min }) => `Password must be at least ${min} characters`)
-      .required('Password is required'),
-    confirmPassword: yup
-      .string()
-      .oneOf([yup.ref('password')], 'Passwords do not match')
-      .required('Confirm password is required'),
-  })
+
 
 const styles = StyleSheet.create({
   container: {
@@ -93,7 +44,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  signupContainer: {
+  loginContainer: {
     width: '80%',
     alignItems: 'center',
     backgroundColor: 'white',
@@ -101,5 +52,19 @@ const styles = StyleSheet.create({
     elevation: 10,
     backgroundColor: '#e6e6e6'
   },
+  textInput: {
+    height: 40,
+    width: '100%',
+    margin: 10,
+    backgroundColor: 'white',
+    borderColor: 'gray',
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 10,
+  },
+  errorText: {
+    fontSize: 10,
+    color: 'red',
+  },
 })
-export default SignUpScreen
+
+export default App
