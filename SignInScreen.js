@@ -13,7 +13,9 @@ import {
   Text,
   StatusBar,
   TextInput,
-  Button
+  Button,
+  Image,
+  TouchableOpacity
 } from 'react-native'
 import SignUp from './SignUpScreen'
 
@@ -22,6 +24,10 @@ const SignInScreen = ({navigation}) => {
     <>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView style={styles.container}>
+        
+        <Image source={require('./assets/se350logo.jpg')} style ={{width:150, height:150}} />
+        <Text style={{fontSize:40}}>Rorr</Text>
+
         <View style={styles.loginContainer}>
           <Text>Login Screen</Text>
           <Formik
@@ -56,23 +62,30 @@ const SignInScreen = ({navigation}) => {
                 {(errors.password && touched.password) &&
                   <Text style={styles.errorText}>{errors.password}</Text>
                 }
+                <TouchableOpacity style = {{margin:5}}>
                 <Button 
+                  color="#ffa500"
                   onPress={handleSubmit}
                   title="LOGIN"
                   disabled={!isValid} 
                 />
+                </TouchableOpacity>
+                <TouchableOpacity style = {{margin:5}}>
                 <Button
+                  color="#ffa500"
                   title="Go to SignUp screen"
                   onPress={()=> navigation.navigate("SignUp")}
                 />
+                </TouchableOpacity>
+
+                <TouchableOpacity style = {{margin:5}}>
                 <Button
-                  title="Go to welcome screen"
-                  onPress={()=> navigation.navigate("Welcome")}
-                />
-                <Button
+                  color="#ffa500"
                   title="Google SignIn"
                   onPress={()=> navigation.navigate("Welcome")}
                 />
+                </TouchableOpacity>
+
               </>
             )}
           </Formik>
@@ -98,6 +111,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'darkgray',
+
   },
   loginContainer: {
     width: '80%',
