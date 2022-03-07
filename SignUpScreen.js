@@ -12,7 +12,6 @@ import {
 } from 'react-native'
 import { Formik, Field } from 'formik'
 import * as yup from 'yup'
-import CustomInput from './CustomInput'
 
 const SignUpScreen = ({navigation}) => {
   return (
