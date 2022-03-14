@@ -24,6 +24,7 @@ const WelcomeScreen = ({navigation}) => {
       <SafeAreaView style={styles.container}>
           <Text>Welcome Screen</Text>
           <Button
+            color="#ffa500"
             title="Sign out"
             onPress={()=> navigation.navigate("SignIn")}
         />
