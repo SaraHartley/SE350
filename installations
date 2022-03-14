@@ -1,0 +1,4 @@
+npm install @react-navigation/native
+expo install react-native-screens react-native-safe-area-context (may not work, but try anyway)
+npm install @react-navigation/native-stack
+npm install formik yup
