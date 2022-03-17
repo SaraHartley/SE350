@@ -66,5 +66,4 @@ const styles = StyleSheet.create({
     color: 'red',
   },
 })
-
 export default App
