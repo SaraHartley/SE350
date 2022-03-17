@@ -18,8 +18,33 @@ import {
   TouchableOpacity
 } from 'react-native'
 import SignUp from './SignUpScreen'
+import * as google2 from 'expo-google-app-auth';
 
 const SignInScreen = ({navigation}) => {
+
+  async function signInWithGoogleAsync() { 
+    try {
+        const result = await google2.logInAsync({
+            iosClientId: "642601661518-3v6o437skkh4ottn4ktsrt3j39f0eiiq.apps.googleusercontent.com",
+            androidClientId: "642601661518-n6t866vl5hn2m3gduq2ad3lr8b7vkuep.apps.googleusercontent.com",
+            scopes: ['profile', 'email'],
+        });
+
+        if (result.type === 'success') {
+            console.log("success");
+            return result.accessToken;
+          } else {
+            return { cancelled: true };
+          }
+        } catch (e) {
+          return { error: true };
+    }
+  };
+
+  const signInWithGoogle = () => {
+    signInWithGoogleAsync()
+  };
+
   return (
     <>
       <StatusBar barStyle="dark-content" />
@@ -35,6 +60,8 @@ const SignInScreen = ({navigation}) => {
             initialValues={{ email: '', password: '' }}
             //onSubmit={values => console.log(values)}
             onSubmit={() => navigation.navigate("Welcome")}
+          >
+            {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid, }) => (
           >
             {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid, }) => (
               <>
@@ -70,7 +97,7 @@ const SignInScreen = ({navigation}) => {
                   disabled={!isValid} 
                 />
                 </TouchableOpacity>
-                <TouchableOpacity style = {{margin:5}}>
+               <TouchableOpacity style = {{margin:5}}>
                 <Button
                   color="#ffa500"
                   title="Go to SignUp screen"
@@ -80,9 +107,9 @@ const SignInScreen = ({navigation}) => {
 
                 <TouchableOpacity style = {{margin:5}}>
                 <Button
+                  onPress={() =>  signInWithGoogle() }
                   color="#ffa500"
                   title="Google SignIn"
-                  onPress={()=> navigation.navigate("Welcome")}
                 />
                 </TouchableOpacity>
 
@@ -103,16 +130,13 @@ const loginValidationSchema = yup.object().shape({
     .string()
     .min(8, ({ min }) => `Password must be at least ${min} characters`)
     .required('Password is required'),
-})
-
-
+  })
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'darkgray',
-
   },
   loginContainer: {
     width: '80%',
@@ -136,5 +160,4 @@ const styles = StyleSheet.create({
     color: 'red',
   },
 })
-
 export default SignInScreen
