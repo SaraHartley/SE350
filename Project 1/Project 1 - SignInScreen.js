@@ -1,6 +1,6 @@
 //template from https://blog.logrocket.com/react-native-form-validations-with-formik-and-yup/ and Youtube Channel "Pradip Debnath"
 //SignInScreen.js
-import React from 'react'
+import React, {useState,useEffect} from 'react'
 import { Formik } from 'formik'
 import * as yup from 'yup'
 import { NavigationContainer } from '@react-navigation/native';
@@ -21,7 +21,19 @@ import SignUp from './SignUpScreen'
 import * as google2 from 'expo-google-app-auth';
 
 const SignInScreen = ({navigation}) => {
+const[oauth,setOauth]=useState(false);
+  
+  useEffect(()=>{
+  if (oauth){
+    alert(`oauth is ${oauth}`);
+    setOauthFalse();
+  }})
 
+  function setOauthFalse(){
+    setOauth(false);
+    //alert(`inside setOauthFalse, oauth is ${oauth}`);
+    navigation.navigate("Welcome");
+  }  
   async function signInWithGoogleAsync() { 
     try {
         const result = await google2.logInAsync({
@@ -32,6 +44,7 @@ const SignInScreen = ({navigation}) => {
 
         if (result.type === 'success') {
             console.log("success");
+            setOauth(true);
             return result.accessToken;
           } else {
             return { cancelled: true };
