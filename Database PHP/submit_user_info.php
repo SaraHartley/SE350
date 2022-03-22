@@ -22,11 +22,11 @@ print $obj1->{'foo-bar'};
 print $obj1->{'name'}; */
  	
  // Populate name from JSON $obj array and store into $name.
-$name = $obj['name'];
+$name = $obj['name'] ?? 'nothing';
 // Populate email from JSON $obj array and store into $email.
-$email = $obj['email'];
+$email = $obj['email'] ?? 'nothing';
 // Populate phone number from JSON $obj array and store into $phone_number.
-$phone_number = $obj['phone_number'];
+$phone_number = $obj['phone_number'] ?? 'nothing';
  // Creating SQL query and insert the record into MySQL database table.
 $Sql_Query = "insert into UserInfoTable (name,email,phone_number) values ('$name','$email','$phone_number')";
  
