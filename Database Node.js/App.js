@@ -1,74 +1,63 @@
 import { StatusBar } from 'expo-status-bar';
-import { Alert, StyleSheet, Text, View,Button,SafeAreaView,AppRegistry,TextInput } from 'react-native';
-import React,{Component} from 'react';
- //iadd rqact native server libraryu
-// import routes from './routes'
+import { Alert, StyleSheet, Text, View,Button,SafeAreaView } from 'react-native';
+import React from 'react';
+ 
 
-//Used tutorial: https://dev.to/saulojoab/how-to-get-data-from-an-mysql-database-in-react-native-53a4
-// installations:
-//npm install express
-//npm install body-parser
-//npm install mysql
+const App=()=> {
+  const username ="Bob";
+  async function postTest(){
+    //console.log(username);
+    await fetch('http://192.168.254.79:3000/newUser', {
+      method: 'POST', // Here you're saying that you want to make a POST request. Could be any method, like a GET, for example.
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      }, // You can specify your requisition headers here. That line is optional.
+      body: JSON.stringify({ // Here's the fun part. Put your data here.
+        //"username": this.state.name,
+        username: username
+      })
+      
+    })
+    .then(response => response.json()) 
+    .then(serverResponse => console.log(serverResponse))
+    .catch((error) => console.warn(error))
+  }
 
-class App extends Component{
-  onPressButton=()=>{
-    alert('alert from function test')
-    console.log("user pressed button from function test")
-
+  function test(){
     fetch('http://192.168.254.79:3000/users')
-    //fetch('http://localhost:3000/users')
-
-    .then(response => response.json())
-    //.then(users => console.warn(users))
-    .then(users => console.log(users))
-    //.then(users => alert(users))
-    //alert(users)
-    
-
+      .then(response => response.json())
+      .then(users => console.log(users))
   };
   
-  render(){
-    //const [text,onChangeText] = useState("");
+  return (
+    <SafeAreaView style={styles.container}>
+      <Text>Insert data into the database</Text>
 
-    return (
-      <SafeAreaView style={styles.container}>
-        <Text>Open up App.js to start working on your 350-database-test app!</Text>
-        {/*<TextInput>
-          style={styles.input}
-          onChangeText={onChangeText}
-          value={text}
-        </TextInput>*/}
-        <Button
-          //onPress={this.test2}
-          onPress={this.onPressButton}
+      
+      
+      <Button
+        title="Post Button"
+        //onPress={()=>alert('pressed')}
+        onPress={postTest}
+        //onPress={()=>console.log(username)}
+      />
 
-          title="Button"
-          //onPress={()=>alert('pressed')}
-        />
-        <StatusBar style="auto" />
-      </SafeAreaView>
-    );
-  };
+      <Text>Get the data from the database</Text>
+      
+      <Button
+        title="Get Button"
+        //onPress={()=>alert('pressed')}
+        onPress={test}
+      />
+
+      <StatusBar style="auto" />
+    </SafeAreaView>
+  );
 };
-//works!
-//function test2(){
-//  alert('alert from test2')
-//};
 
-//doesn't work
-function test(){
-  alert('alert from function test')
-  console.log("user pressed button from function test")
 
-  //fetch('http://192.168.254.79:3000/users')
-  fetch('http://localhost:3000/users')
 
-    .then(response => response.json())
-    //.then(users => console.warn(users))
-    .then(users => console.log(users))
-    //.then(users => alert(users))
-
-};
 
 const styles = StyleSheet.create({
   container: {
@@ -76,11 +65,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  input:{
-    margin:15,
-    borderColor: 'black',
-    borderWidth: 1
   },
 });
 
