@@ -1,10 +1,16 @@
+
 import { StatusBar } from 'expo-status-bar';
-import { Alert, StyleSheet, Text, View,Button,SafeAreaView } from 'react-native';
+import { Alert, StyleSheet, Text, View,Button,SafeAreaView, TouchableOpacity } from 'react-native';
 import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
  
 
-const App=()=> {
-  const username ="Bob";
+const App=({navigation})=> {
+  const emailValue ="next@hotmail.com";
+  const passwordValue ="password2";
+  const fullNameValue ="Santa Claus";
+
   async function postTest(){
     //console.log(username);
     await fetch('http://192.168.254.79:3000/newUser', {
@@ -15,7 +21,11 @@ const App=()=> {
       }, // You can specify your requisition headers here. That line is optional.
       body: JSON.stringify({ // Here's the fun part. Put your data here.
         //"username": this.state.name,
-        username: username
+        //username: username,
+        email: emailValue,
+        password: passwordValue,
+        fullName: fullNameValue
+
       })
       
     })
@@ -25,7 +35,7 @@ const App=()=> {
   }
 
   function test(){
-    fetch('http://192.168.254.79:3000/users')
+    fetch('http://192.168.254.79:3000/rorrUsers')
       .then(response => response.json())
       .then(users => console.log(users))
   };
@@ -50,6 +60,14 @@ const App=()=> {
         //onPress={()=>alert('pressed')}
         onPress={test}
       />
+
+        <TouchableOpacity style = {{margin:5}}>
+            <Button
+                color="#ffa500"
+                title="Go to SignIn screen"
+                onPress={()=> navigation.navigate("SignIn")}
+            />
+        </TouchableOpacity>
 
       <StatusBar style="auto" />
     </SafeAreaView>
