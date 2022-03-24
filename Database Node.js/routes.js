@@ -17,9 +17,14 @@ const connection = mysql.createPool({
 
 // Starting our app.
 const app = express();
+app.use(bodyParser.urlencoded({extended:false}))
+app.use(bodyParser.json())
 
 app.post('/newUser', function (req, res) {
-  //console.log(req.body.username);           //!!!! This is the line that causes the error!!!
+  console.log(req.body.email);
+  console.log(req.body.password);
+  console.log(req.body.fullName);
+
   console.log("at post");
 
   // Connecting to the database.
@@ -30,8 +35,16 @@ app.post('/newUser', function (req, res) {
   console.log("Connected!");
 
     // Executing the MySQL query (select all data from the 'users' table).
-    connection.query("INSERT INTO users (username) values('Mike')", function (error, results, fields) {
-    //connection.query("INSERT INTO users (username) values(req.body.username)", function (error, results, fields) {
+    //connection.query("INSERT INTO users (username) values('Mike')", function (error, results, fields) {
+
+    var email = req.body.email;
+    var password =req.body.password;
+    var fullName =req.body.fullName;
+    connection.query(`INSERT INTO RorrUsers (rorrEmail,rorrPassword,rorrFullName) values("${email}","${password}","${fullName}")`, function (error, results, fields) {
+
+    /*var sql = "INSERT INTO users (username) value ?";
+    var value = req.body.username;
+    connection.query(sql,value, function (error, results, fields) {*/
 
       // If some error occurs, we throw an error.
       if (error) throw error;
@@ -44,12 +57,12 @@ app.post('/newUser', function (req, res) {
 
 
 // Creating a GET route that returns data from the 'users' table.
-app.get('/users', function (req, res) {
+app.get('/rorrUsers', function (req, res) {
     // Connecting to the database.
     connection.getConnection(function (err, connection) {
 
     // Executing the MySQL query (select all data from the 'users' table).
-    connection.query('SELECT * FROM users', function (error, results, fields) {
+    connection.query('SELECT * FROM RorrUsers', function (error, results, fields) {
       // If some error occurs, we throw an error.
       if (error) throw error;
 
@@ -61,5 +74,5 @@ app.get('/users', function (req, res) {
 
 // Starting our server.
 app.listen(3000, () => {
- console.log('Go to http://localhost:3000/users so you can see the data.');
+ console.log('Go to http://localhost:3000/rorrUsers so you can see the data.');
 });
