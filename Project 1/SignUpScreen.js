@@ -1,5 +1,7 @@
 // SignUpScreen.js
 //template from https://blog.logrocket.com/react-native-form-validations-with-formik-and-yup/ and Youtube Channel "Pradip Debnath"
+
+//TODO Need to write full name, email and password into DB
 import React from 'react'
 import {
   SafeAreaView,
@@ -14,7 +16,79 @@ import {
 } from 'react-native'
 import { Formik, Field } from 'formik'
 import * as yup from 'yup'
+
 const SignUpScreen = ({navigation}) => {
+
+  const emailValue ="hello@hotmail.com";
+  const passwordValue ="password4";
+  const fullNameValue ="Santa Claus";
+
+  
+  async function postTest(inputEmail,inputPassword,inputFullName){
+
+    console.log("Inside postTest");
+    await fetch('http://192.168.254.79:3000/newUser', {
+      method: 'POST', // Here you're saying that you want to make a POST request. Could be any method, like a GET, for example.
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      }, // You can specify your requisition headers here. That line is optional.
+      body: JSON.stringify({ // Here's the fun part. Put your data here.
+        //"username": this.state.name,
+        //username: username,
+        email: inputEmail,
+        password: inputPassword,
+        fullName: inputFullName
+
+      })
+      
+    })
+    .then(response => response.json()) 
+    .then(serverResponse => console.log(serverResponse))
+    .catch((error) => console.warn(error))
+  }
+
+  function getTest(inputEmail,inputPassword,inputFullName){
+    //search if either username already in DB
+    console.log(inputEmail,inputPassword);
+    console.log("");
+    var value = true;
+    var tempResponse = {};
+    fetch('http://192.168.254.79:3000/rorrUsers')
+      .then(response => response.json())
+      //.then(users => console.log())
+      .then(users => {
+        var count = 0;
+        for ( var xObject in users){
+          count++;
+          var tempObj =users[xObject];
+
+          console.log(tempObj);
+
+          var tempEmail =tempObj.rorrEmail;
+          var tempPassword =tempObj.rorrPassword;
+          console.log(tempEmail);
+          console.log(tempPassword);
+          if (tempEmail === inputEmail){
+            console.log('Email already exists');
+            value =true;
+            console.log(value);
+
+          }else{
+            console.log('Email NOT match');
+            value =false;
+            console.log(value);
+          }
+        }
+
+        //if not insert the infoformatio into the DB
+        if (value==false){
+          postTest(inputEmail,inputPassword,inputFullName);
+        }
+      })
+    //if not insert the infoformatio into the DB
+
+  };
   return (
     <>
       <StatusBar barStyle="dark-content" />
@@ -22,12 +96,17 @@ const SignUpScreen = ({navigation}) => {
       <Image source={require('./assets/se350logo.jpg')} style ={{width:150, height:150}} />
         <Text style={{fontSize:40}}>Rorr</Text>
         <View style={styles.signupContainer}>
+
         <Text>Sign Up Screen</Text>
+
         <Formik
             validationSchema={signUpValidationSchema}
             initialValues={{fullName: '', email: '', password: '',}}
             //onSubmit={values => console.log(values)}
-            onSubmit={() => navigation.navigate("SignIn")}
+            //onSubmit={() => navigation.navigate("SignIn")}
+            onSubmit={(values) => getTest(values.email,values.password,values.fullName)}
+
+
         >
           {({  handleChange, handleBlur, handleSubmit, values, errors, touched, isValid, }) => (
             <>
@@ -77,6 +156,7 @@ const SignUpScreen = ({navigation}) => {
                 disabled={!isValid}
               />
               </TouchableOpacity>
+
               <TouchableOpacity style = {{margin:5}}>
               <Button
                 color="#ffa500"
@@ -84,12 +164,13 @@ const SignUpScreen = ({navigation}) => {
                 onPress={()=> navigation.navigate("SignIn")}
               />
               </TouchableOpacity>
+
             </>
           )}
         </Formik>
         </View>
       </SafeAreaView>
-   </>
+    </>
   )
 }
 const signUpValidationSchema = yup.object().shape({
@@ -110,17 +191,19 @@ const signUpValidationSchema = yup.object().shape({
       .min(8, ({ min }) => `Password must be at least ${min} characters`)
       .required('Password is required'),
   })
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'darkgray',
+
   },
   signupContainer: {
     width: '80%',
     alignItems: 'center',
-        backgroundColor: 'white',
+    backgroundColor: 'white',
     padding: 10,
     elevation: 10,
     backgroundColor: '#e6e6e6'
