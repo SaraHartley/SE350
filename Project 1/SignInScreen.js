@@ -1,6 +1,9 @@
 //template from https://blog.logrocket.com/react-native-form-validations-with-formik-and-yup/ and Youtube Channel "Pradip Debnath"
 //SignInScreen.js
-import React, {useState,useEffect} from 'react'
+
+//TODO Need to read email and password from DB
+
+import React from 'react'
 import { Formik } from 'formik'
 import * as yup from 'yup'
 import { NavigationContainer } from '@react-navigation/native';
@@ -18,45 +21,89 @@ import {
   TouchableOpacity
 } from 'react-native'
 import SignUp from './SignUpScreen'
-import * as google2 from 'expo-google-app-auth';
 
 const SignInScreen = ({navigation}) => {
-const[oauth,setOauth]=useState(false);
-  
-  useEffect(()=>{
-  if (oauth){
-    alert(`oauth is ${oauth}`);
-    setOauthFalse();
-  }})
 
-  function setOauthFalse(){
-    setOauth(false);
-    //alert(`inside setOauthFalse, oauth is ${oauth}`);
-    navigation.navigate("Welcome");
-  }  
-  async function signInWithGoogleAsync() { 
-    try {
-        const result = await google2.logInAsync({
-            iosClientId: "642601661518-3v6o437skkh4ottn4ktsrt3j39f0eiiq.apps.googleusercontent.com",
-            androidClientId: "642601661518-n6t866vl5hn2m3gduq2ad3lr8b7vkuep.apps.googleusercontent.com",
-            scopes: ['profile', 'email'],
-        });
+  function getTest(inputEmail,inputPassword){
+    console.log(inputEmail,inputPassword);
+    console.log("");
+    var value = false;
+    var tempResponse = {};
+    fetch('http://192.168.254.79:3000/rorrUsers')
+      .then(response => response.json())
+      //.then(users => console.log())
+      .then(users => {
+        //var x =
+        var count = 0;
+        //for (var key of Object.keys(users)){
+        for ( var xObject in users){
+          count++;
+          var tempObj =users[xObject];
+          //var tempObj =users[xObject];
 
-        if (result.type === 'success') {
-            console.log("success");
-            setOauth(true);
-            return result.accessToken;
-          } else {
-            return { cancelled: true };
+          console.log(tempObj);
+
+          var tempEmail =tempObj.rorrEmail;
+          var tempPassword =tempObj.rorrPassword;
+          console.log(tempEmail);
+          console.log(tempPassword);
+          if (tempEmail === inputEmail){
+            console.log('Email matches');
+            if(tempPassword === inputPassword){
+              console.log('password matches');
+              value= true;
+              console.log(value);
+              navigation.navigate("Welcome");
+              break;
+
+            }else{
+              console.log('password not match');
+              value=false;
+              console.log(value);
+              //alert("The username and/or password is not recognized.")
+            }
+          }else{
+            console.log('Email NOT match');
+            value =false;
+            console.log(value);
+            //alert("The username and/or password is not recognized.")
+
           }
-        } catch (e) {
-          return { error: true };
-    }
+
+
+          /*if (key === 'rorrEmail'){
+            console.log(key);
+            //if (x === inputEmail){
+            //  if()
+            //}
+          }else{
+            console.log("email not found");
+          }*/
+        }
+        if (value==false){
+          alert("The username and/or password is not recognized.");
+
+        }
+      })
+
+      
+    
+    //console.log(tempResponse);
+    //var test= verifyUser("hello");
+    //console.log(test);
+    //value=test;
+    
+    
+    //return value;
+    
   };
 
-  const signInWithGoogle = () => {
-    signInWithGoogleAsync()
-  };
+  function verifyUser(response){
+    console.log("Inside verifyUser");
+    console.log(response);
+    var value2 = false;
+    return value2;
+  }
 
   return (
     <>
@@ -72,9 +119,9 @@ const[oauth,setOauth]=useState(false);
             validationSchema={loginValidationSchema}
             initialValues={{ email: '', password: '' }}
             //onSubmit={values => console.log(values)}
-            onSubmit={() => navigation.navigate("Welcome")}
-          >
-            {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid, }) => (
+            //onSubmit={() => navigation.navigate("Welcome")}
+            onSubmit={(values) => getTest(values.email,values.password)}
+
           >
             {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid, }) => (
               <>
@@ -110,7 +157,7 @@ const[oauth,setOauth]=useState(false);
                   disabled={!isValid} 
                 />
                 </TouchableOpacity>
-               <TouchableOpacity style = {{margin:5}}>
+                <TouchableOpacity style = {{margin:5}}>
                 <Button
                   color="#ffa500"
                   title="Go to SignUp screen"
@@ -120,9 +167,16 @@ const[oauth,setOauth]=useState(false);
 
                 <TouchableOpacity style = {{margin:5}}>
                 <Button
-                  onPress={() =>  signInWithGoogle() }
                   color="#ffa500"
                   title="Google SignIn"
+                  onPress={()=> navigation.navigate("Welcome")}
+                />
+                </TouchableOpacity>
+                <TouchableOpacity style = {{margin:5}}>
+                <Button
+                  color="#ffa500"
+                  title="Go to DBTest screen"
+                  onPress={()=> navigation.navigate("DBTest")}
                 />
                 </TouchableOpacity>
 
@@ -143,13 +197,16 @@ const loginValidationSchema = yup.object().shape({
     .string()
     .min(8, ({ min }) => `Password must be at least ${min} characters`)
     .required('Password is required'),
-  })
+})
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'darkgray',
+
   },
   loginContainer: {
     width: '80%',
@@ -173,4 +230,5 @@ const styles = StyleSheet.create({
     color: 'red',
   },
 })
+
 export default SignInScreen
