@@ -6,4 +6,4 @@ CREATE TABLE `rorrusers` (
   PRIMARY KEY (`rorrId`),
   UNIQUE KEY `rorrEmail` (`rorrEmail`),
   UNIQUE KEY `rorrPassword` (`rorrPassword`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4
