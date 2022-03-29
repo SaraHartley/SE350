@@ -1,7 +1,6 @@
 // SignUpScreen.js
 //template from https://blog.logrocket.com/react-native-form-validations-with-formik-and-yup/ and Youtube Channel "Pradip Debnath"
 
-//TODO Need to write full name, email and password into DB
 import React from 'react'
 import {
   SafeAreaView,
@@ -19,11 +18,6 @@ import * as yup from 'yup'
 
 const SignUpScreen = ({navigation}) => {
 
-  const emailValue ="hello@hotmail.com";
-  const passwordValue ="password4";
-  const fullNameValue ="Santa Claus";
-
-  
   async function postTest(inputEmail,inputPassword,inputFullName){
 
     console.log("Inside postTest");
@@ -51,7 +45,7 @@ const SignUpScreen = ({navigation}) => {
   function getTest(inputEmail,inputPassword,inputFullName){
     //search if either username already in DB
     console.log(inputEmail,inputPassword);
-    console.log("");
+    console.log("\n");
     var value = true;
     var tempResponse = {};
     fetch('http://192.168.254.79:3000/rorrUsers')
@@ -62,7 +56,7 @@ const SignUpScreen = ({navigation}) => {
         for ( var xObject in users){
           count++;
           var tempObj =users[xObject];
-
+          console.log("\n");
           console.log(tempObj);
 
           var tempEmail =tempObj.rorrEmail;
@@ -71,19 +65,23 @@ const SignUpScreen = ({navigation}) => {
           console.log(tempPassword);
           if (tempEmail === inputEmail){
             console.log('Email already exists');
-            value =true;
+            value = true;
             console.log(value);
+            break;
 
           }else{
-            console.log('Email NOT match');
-            value =false;
+            console.log('Email does not exist already');
+            value = false;
             console.log(value);
           }
         }
 
         //if not insert the infoformatio into the DB
-        if (value==false){
+        if (value===false){
           postTest(inputEmail,inputPassword,inputFullName);
+          navigation.navigate("SignIn");
+        }else{
+          alert("The email you entered is already being used.");
         }
       })
     //if not insert the infoformatio into the DB
