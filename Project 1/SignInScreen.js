@@ -81,7 +81,7 @@ const SignInScreen = ({navigation}) => {
           }*/
         }
         if (value==false){
-          alert("The username and/or password is not recognized.");
+          alert("The username and/or password is not recognized. Please check the capitalization.");
 
         }
       })
