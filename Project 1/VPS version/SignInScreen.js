@@ -46,10 +46,7 @@ const SignInScreen = ({navigation}) => {
             console.log("success");
             const userEmail = result.user.email;
             console.log(userEmail);
-            // check user database for userEmail
-            // if userEmail is found set Oauth true
-            // if userEmail is not found display error 
-            setOauth(true);
+            getOTest(userEmail);
           } else {
             return { cancelled: true };
           }
@@ -65,7 +62,60 @@ const SignInScreen = ({navigation}) => {
   const signInWithGoogle = () => {
     signInWithGoogleAsync()
   };
+  
+function getOTest(inputEmail){
+    //print out input value from user
+    console.log(inputEmail);
+    console.log("\n");
 
+    //set flag variable
+    var value = true;
+    var tempResponse = {};
+
+    //read table data
+    fetch('http://192.168.254.79:3000/rorrUsers')
+      .then(response => response.json())
+
+      //search if username already in DB
+      .then(users => {
+        var count = 0;
+
+	//loop through db objects
+        for ( var xObject in users){
+          count++;
+          var tempObj =users[xObject];
+          console.log("\n");
+          console.log(tempObj);
+
+          var tempEmail =tempObj.rorrEmail;
+          console.log(tempEmail);
+	  
+	  //compare user input to current object username
+          if (tempEmail === inputEmail){
+            console.log('Email already exists');
+	    //set flag variable to true
+            value = true;
+            console.log(value);
+            break;
+
+          }else{
+            console.log('Email does not exist already');
+            value = false;
+            console.log(value);
+          }
+        }
+
+	//change variable oauth to true so the user 
+		//is redirected to welcome page 
+        if (value===true){
+          setOauth(true);
+        }else{
+	//alert user that they used invalid email
+          alert("The email you used is not in a registered user.");
+        }
+      })
+  };
+  
   function getTest(inputEmail,inputPassword){
     console.log(inputEmail,inputPassword);
     console.log("");
