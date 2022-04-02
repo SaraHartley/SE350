@@ -25,13 +25,15 @@ const SignInScreen = ({navigation}) => {
   
   useEffect(()=>{
   if (oauth){
-    setOauthFalse();
-  }})
-
-  function setOauthFalse(){
     setOauth(false);
     navigation.navigate("Welcome");
-  }  
+  }});
+
+//   function setOauthFalse(){
+//     setOauth(false);
+//     navigation.navigate("Welcome");
+//   }
+  
   async function signInWithGoogleAsync() { 
     try {
         const result = await google2.logInAsync({
@@ -42,8 +44,12 @@ const SignInScreen = ({navigation}) => {
 
         if (result.type === 'success') {
             console.log("success");
+            const userEmail = result.user.email;
+            console.log(userEmail);
+            // check user database for userEmail
+            // if userEmail is found set Oauth true
+            // if userEmail is not found display error 
             setOauth(true);
-            return result.accessToken;
           } else {
             return { cancelled: true };
           }
