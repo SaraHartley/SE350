@@ -66,7 +66,6 @@ app.post('/newUser', function (req, res) {
   });
 });
 
-
 // Creating a GET route that returns data from the 'users' table.
 app.get('/rorrUsers', function (req, res) {
     // Connecting to the database.
