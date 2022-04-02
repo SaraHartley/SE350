@@ -16,6 +16,87 @@ import { Formik, Field } from 'formik'
 import * as yup from 'yup'
 
 const SignUpScreen = ({navigation}) => {
+
+//BEGIN NEW STUFF
+async function postTest(inputEmail,inputPassword,inputFullName){
+
+    console.log("Inside postTest");
+    await fetch('http://34.68.45.171:3000/newUser', {
+      method: 'POST', // Here you're saying that you want to make a POST request. Could be any method, like a GET, for example.
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      }, // You can specify your requisition headers here. That line is optional.
+      body: JSON.stringify({ // Here's the fun part. Put your data here.
+        //"username": this.state.name,
+        //username: username,
+        email: inputEmail,
+        password: inputPassword,
+        fullName: inputFullName
+
+      })
+
+    })
+    .then(response => response.json()) 
+    .then(serverResponse => console.log(serverResponse))
+    .catch((error) => console.warn(error))
+  }
+
+function getTest(inputEmail,inputPassword,inputFullName){
+    //search if either username already in DB
+   
+    console.log(inputEmail,inputPassword,inputFullName);
+    console.log("\n");
+    var value = true;
+    var tempResponse = {};
+   
+    fetch('http://34.68.45.171:3000/rorrUsers')
+      .then(response => response.json())
+      //.then(users => console.log(users))
+
+//BEGIN  COMMENTED STUFF
+      .then(users => {
+        console.log('right before loop');
+        console.log(inputEmail,inputPassword,inputFullName);
+        var count = 0;
+        for ( var xObject in users){
+          count++;
+          var tempObj =users[xObject];
+          console.log("\n");
+          console.log(tempObj);
+
+          var tempEmail =tempObj.rorrEmail;
+          var tempPassword =tempObj.rorrPassword;
+          console.log(tempEmail);
+          console.log(tempPassword);
+          if (tempEmail === inputEmail){
+            console.log('Email already exists');
+            value = true;
+            console.log(value);
+            break;
+
+          }else{
+            console.log('Email does not exist already');
+            value = false;
+            console.log(value);
+          }
+        }
+
+        //if not insert the infoformatio into the DB
+        if (value===false){
+          postTest(inputEmail,inputPassword,inputFullName);
+          navigation.navigate("SignIn");
+        }else{
+          alert("The email you entered is already being used.");
+        }
+      })
+//END COMMENTED STUFF
+    //if not insert the infoformatio into the DB
+
+  };
+
+//END NEW STUFF
+
   return (
     <>
       <StatusBar barStyle="dark-content" />
@@ -30,12 +111,14 @@ const SignUpScreen = ({navigation}) => {
             validationSchema={signUpValidationSchema}
             initialValues={{fullName: '', email: '', password: '',}}
             //onSubmit={values => console.log(values)}
-            onSubmit={() => navigation.navigate("SignIn")}
+            //onSubmit={() => navigation.navigate("SignIn")}
+            onSubmit={(values) => getTest(values.email,values.password,values.fullName)}
+
 
         >
           {({  handleChange, handleBlur, handleSubmit, values, errors, touched, isValid, }) => (
             <>
-              
+
               <TextInput
                 //component={CustomInput}
                 name="fullName"
@@ -76,7 +159,7 @@ const SignUpScreen = ({navigation}) => {
               <TouchableOpacity style = {{margin:5}}>
               <Button
                 color="#ffa500"
-                onPress={handleSubmit}
+                onPress={handleSubmit}      
                 title="SIGN UP"
                 disabled={!isValid}
               />
@@ -116,7 +199,6 @@ const signUpValidationSchema = yup.object().shape({
       .min(8, ({ min }) => `Password must be at least ${min} characters`)
       .required('Password is required'),
   })
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
