@@ -23,7 +23,7 @@ import * as google2 from 'expo-google-app-auth';
 const SignInScreen = ({navigation}) => {
   const[oauth,setOauth]=useState(false);
   
-  useEffect(()=>{
+ /* useEffect(()=>{
   if (oauth){
     setOauthFalse();
   }})
@@ -31,7 +31,17 @@ const SignInScreen = ({navigation}) => {
   function setOauthFalse(){
     setOauth(false);
     navigation.navigate("Welcome");
-  }  
+  }*/
+  useEffect(()=>{
+    if (oauth){
+      console.log("inside useEffect()");
+      console.log(`1st temp function oauth is ${oauth}`);
+      setOauth(false);
+      console.log(`2nd temp function oauth is ${oauth}`);
+      navigation.navigate("Welcome");
+      console.log(`after navigation oauth is ${oauth}`);
+
+  }});  
   async function signInWithGoogleAsync() { 
     try {
         const result = await google2.logInAsync({
@@ -42,9 +52,12 @@ const SignInScreen = ({navigation}) => {
 
         if (result.type === 'success') {
             console.log("success");
-            setOauth(true);
-            return result.accessToken;
-          } else {
+            //setOauth(true);
+            //return result.accessToken;
+            const userEmail = result.user.email;
+            console.log(userEmail);
+            getOTest(userEmail);  
+        } else {
             return { cancelled: true };
           }
         } catch (e) {
@@ -55,9 +68,58 @@ const SignInScreen = ({navigation}) => {
   const signInWithGoogle = () => {
     signInWithGoogleAsync()
   };
+ function getOTest(inputEmail){
+    //print out input value from user
+    console.log(inputEmail);
+    console.log("\n");
 
-  const signInWithGoogle = () => {
-    signInWithGoogleAsync()
+    //set flag variable
+    var value = true;
+    var tempResponse = {};
+
+    //read table data
+    fetch('http://34.68.45.171:3000/rorrUsers')
+      .then(response => response.json())
+
+      //search if username already in DB
+      .then(users => {
+        var count = 0;
+
+        //loop through db objects
+        for ( var xObject in users){
+          count++;
+          var tempObj =users[xObject];
+          console.log("\n");
+          console.log(tempObj);
+
+          var tempEmail =tempObj.rorrEmail;
+          console.log(tempEmail);
+
+          //compare user input to current object username
+          if (tempEmail === inputEmail){
+            console.log('Email already exists');
+            //set flag variable to true
+            value = true;
+            console.log(value);
+            break;
+
+          }else{
+            console.log('Email does not exist already');
+            value = false;
+            console.log(value);
+          }
+        }
+
+        //change variable oauth to true so the user 
+                //is redirected to welcome page 
+        if (value===true){
+          console.log(`dbtest oauth is ${oauth}`);
+          setOauth(true);
+        }else{
+        //alert user that they used invalid email
+          alert("The email you used is not in a registered user.");
+          }
+      })
   };
 
   function getTest(inputEmail,inputPassword){
@@ -97,7 +159,7 @@ const SignInScreen = ({navigation}) => {
               value=false;
               console.log(value);
               //alert("The username and/or password is not recognized.")
-            }
+               }
           }else{
             console.log('Email NOT match');
             value =false;
@@ -121,7 +183,9 @@ const SignInScreen = ({navigation}) => {
 
         }
       })
-      
+
+
+    
     //console.log(tempResponse);
     //var test= verifyUser("hello");
     //console.log(test);
@@ -131,7 +195,6 @@ const SignInScreen = ({navigation}) => {
     //return value;
     
   };
-
   function verifyUser(response){
     console.log("Inside verifyUser");
     console.log(response);
@@ -176,8 +239,8 @@ const SignInScreen = ({navigation}) => {
                   onChangeText={handleChange('password')}
                   onBlur={handleBlur('password')}
                   value={values.password}
-                  secureTextEntry
-                />
+                  secureTextEntry 
+                  />
                 {(errors.password && touched.password) &&
                   <Text style={styles.errorText}>{errors.password}</Text>
                 }
@@ -204,6 +267,7 @@ const SignInScreen = ({navigation}) => {
                   title="Google SignIn"
                 />
                 </TouchableOpacity>
+
               </>
             )}
           </Formik>
@@ -211,7 +275,7 @@ const SignInScreen = ({navigation}) => {
       </SafeAreaView>
     </>
   )
-}
+}            
 const loginValidationSchema = yup.object().shape({
   email: yup
     .string()
@@ -239,7 +303,7 @@ const styles = StyleSheet.create({
     padding: 10,
     elevation: 10,
     backgroundColor: '#e6e6e6'
-  },               
+  },
   textInput: {
     height: 40,
     width: '100%',
