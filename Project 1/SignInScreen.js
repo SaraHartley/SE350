@@ -3,7 +3,7 @@
 
 //TODO Need to read email and password from DB
 
-import React from 'react'
+import React, {useState,useEffect} from 'react'
 import { Formik } from 'formik'
 import * as yup from 'yup'
 import { NavigationContainer } from '@react-navigation/native';
@@ -21,8 +21,121 @@ import {
   TouchableOpacity
 } from 'react-native'
 import SignUp from './SignUpScreen'
+import * as google2 from 'expo-google-app-auth';
+
 
 const SignInScreen = ({navigation}) => {
+
+  const[oauth,setOauth]=useState(false);
+  
+  /*useEffect(()=>{
+  if (oauth){
+    console.log("changing oauth");
+    console.log(`useEffect oauth is ${oauth}`);
+    setOauthFalse();
+  }})
+
+  function setOauthFalse(){
+    console.log("next changing oauth");
+    console.log(`1st function oauth is ${oauth}`);
+
+    setOauth(false);
+    console.log(`2nd function oauth is ${oauth}`);
+    navigation.navigate("Welcome");
+    console.log(`after navigation oauth is ${oauth}`);
+
+  }*/
+  useEffect(()=>{
+    if (oauth){
+      console.log("inside useEffect()");
+      console.log(`1st temp function oauth is ${oauth}`);
+      setOauth(false);
+      console.log(`2nd temp function oauth is ${oauth}`);
+      navigation.navigate("Welcome");
+      console.log(`after navigation oauth is ${oauth}`);
+
+  }});
+
+  async function signInWithGoogleAsync() { 
+    try {
+        const result = await google2.logInAsync({
+            iosClientId: "642601661518-3v6o437skkh4ottn4ktsrt3j39f0eiiq.apps.googleusercontent.com",
+            androidClientId: "642601661518-n6t866vl5hn2m3gduq2ad3lr8b7vkuep.apps.googleusercontent.com",
+            scopes: ['profile', 'email'],
+        });
+
+        if (result.type === 'success') {
+            console.log("success");
+            //setOauth(true);
+            //return result.accessToken;
+            const userEmail = result.user.email;
+            console.log(userEmail);
+            getOTest(userEmail);
+          } else {
+            return { cancelled: true };
+          }
+        } catch (e) {
+          return { error: true };
+    }
+  };
+
+  const signInWithGoogle = () => {
+    signInWithGoogleAsync()
+  };
+
+  function getOTest(inputEmail){
+    //print out input value from user
+    console.log(inputEmail);
+    console.log("\n");
+
+    //set flag variable
+    var value = true;
+    var tempResponse = {};
+
+    //read table data
+    fetch('http://192.168.254.79:3000/rorrUsers')
+      .then(response => response.json())
+
+      //search if username already in DB
+      .then(users => {
+        var count = 0;
+
+	//loop through db objects
+        for ( var xObject in users){
+          count++;
+          var tempObj =users[xObject];
+          console.log("\n");
+          console.log(tempObj);
+
+          var tempEmail =tempObj.rorrEmail;
+          console.log(tempEmail);
+
+	  //compare user input to current object username
+          if (tempEmail === inputEmail){
+            console.log('Email already exists');
+	    //set flag variable to true
+            value = true;
+            console.log(value);
+            break;
+
+          }else{
+            console.log('Email does not exist already');
+            value = false;
+            console.log(value);
+          }
+        }
+
+	//change variable oauth to true so the user 
+		//is redirected to welcome page 
+        if (value===true){
+          console.log(`dbtest oauth is ${oauth}`);
+          setOauth(true);
+        }else{
+	//alert user that they used invalid email
+          alert("The email you used is not in a registered user.");
+        }
+      })
+  };
 
   function getTest(inputEmail,inputPassword){
     console.log(inputEmail,inputPassword);
@@ -169,17 +282,11 @@ const SignInScreen = ({navigation}) => {
                 <Button
                   color="#ffa500"
                   title="Google SignIn"
-                  onPress={()=> navigation.navigate("Welcome")}
+                  //onPress={()=> navigation.navigate("Welcome")}
+                  //onPress={()=> setOauth(true)}
+                  onPress={() =>  signInWithGoogle() }
                 />
                 </TouchableOpacity>
-                <TouchableOpacity style = {{margin:5}}>
-                <Button
-                  color="#ffa500"
-                  title="Go to DBTest screen"
-                  onPress={()=> navigation.navigate("DBTest")}
-                />
-                </TouchableOpacity>
-
               </>
             )}
           </Formik>
