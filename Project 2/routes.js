@@ -44,7 +44,7 @@ app.post('/newCount', function (req, res) {
     var news =req.body.News;
     var political =req.body.Political;
 
-    connection.query(`INSERT INTO topicCounter (Animal,Funny,News,Political) values("${animal}","${funny}","${news}","${political}")`, function (error, results, fields) {
+    connection.query(`INSERT INTO topicCounter3 (Animal,Funny,News,Political) values("${animal}","${funny}","${news}","${political}")`, function (error, results, fields) {
 
 
       if (error) throw error;
@@ -62,9 +62,10 @@ app.get('/getCount', function (req, res) {
     connection.getConnection(function (err, connection) {
 
     // Executing the MySQL query (select all data from the 'users' table).
-    connection.query('SELECT Animal,Funny,News,Political FROM topicCounter', function (error, results, fields) {
+    connection.query('SELECT Animal,Funny,News,Political FROM topicCounter3', function (error, results, fields) {
       // If some error occurs, we throw an error.
       if (error) throw error;
+      console.log("Connected!");
 
       // Getting the 'response' from the database and sending it to our route. This is were the data is.
       res.send(results)
