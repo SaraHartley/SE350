@@ -13,33 +13,51 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function App() {
 
   //auto session stuff
-  const appState = useRef(AppState.currentState)
-  const [appStateVisible, setAppStateVisible] = useState(appState.current)
+  const appState = useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
   useEffect(() => {
+    //temporary
+    console.log("useeffect initial animal counter:",animalCounter);
+    
     const subscription = AppState.addEventListener("change", nextAppState => {
       if (
         appState.current.match(/inactive|background/) &&
         nextAppState === "active"
       ) {
         console.log("App has come to the foreground!");
+        
       }
 
       appState.current = nextAppState;
       setAppStateVisible(appState.current);
       console.log("AppState", appState.current);
-       if (appState.current.match(/inactive|background/))
-       {
-         console.log("send data here");
-         getTest();
-       }
-    });
-    return () => {
-    subscription.remove();
-    };
-    }, []);
-  
+      if (appState.current.match(/inactive|background/))
+      {
+        console.log("send data here");
+        console.log("use effect animal counter:", animalCounter);
+        const animalCountValue = AsyncStorage.getItem('@animalCount');
+        const animalCount2 = parseInt(animalCountValue);
+        console.log("useeffect animal couter when inactive:",animalCount2);
+        getTest();
+        //clearAsyncStorage;
+        //window.localStorage.removeItem('@animalCount');
+        //window.localStorage.removeItem('@animalCount');
+        //window.localStorage.removeItem('@animalCount');
 
+        //eraseData;
+        /*const animalCountValue = await AsyncStorage.getItem('@animalCount');
+        const animalCount2 = parseInt(animalCountValue);
+        console.log(animalCount2);*/
+        //window.localStorage.removeItem('@animalCount');
+
+      }
+    });
+    /*return (subscription) => {
+    subscription.remove();
+    };*/
+  }, []);
+  
   //grid view stuff
   const animalPic='http://boomstickcomics.com/wp-content/uploads/2015/07/the_revenant__2015__movie_poster_by_nabilstevieg-d8jq7yv.jpg';
   const funnyPic='http://boomstickcomics.com/wp-content/uploads/2015/07/the_revenant__2015__movie_poster_by_nabilstevieg-d8jq7yv.jpg';
@@ -70,11 +88,24 @@ export default function App() {
   ]
   
   //Database stuff
-  async function postTest(inputAnimalCount,inputFunnyCount,inputNewsCount,inputPoliticalCount){
-    inputAnimalCount+=animalCounter;
-    inputFunnyCount+=funnyCounter;
-    inputNewsCount+=newsCounter;
-    inputPoliticalCount+=politicalCounter;
+  async function postTest(inputAnimalCount,inputFunnyCount,inputNewsCount,inputPoliticalCount, dbAnimalCount, dbFunnyCount, dbNewsCount, dbPoliticalCount){
+    console.log("dbanimal Count:");
+    console.log(dbAnimalCount);
+    console.log(dbFunnyCount);
+    console.log(dbNewsCount);
+    console.log(dbPoliticalCount);
+    console.log("animal count "+'@animalCount');
+    //console.log(animalCount);
+
+    //temporary
+    const countValue = await AsyncStorage.getItem('@animalCount');
+    const count = parseInt(countValue);
+    console.log("New way to get Animal count:",count);
+
+    inputAnimalCount+=dbAnimalCount;
+    inputFunnyCount+=dbFunnyCount;
+    inputNewsCount+=dbNewsCount;
+    inputPoliticalCount+=dbPoliticalCount;
     console.log("Inside postTest");
     await fetch('http://192.168.254.79:3000/newCount', {
       method: 'POST', // Here you're saying that you want to make a POST request. Could be any method, like a GET, for example.
@@ -96,6 +127,9 @@ export default function App() {
     .then(response => response.json()) 
     .then(serverResponse => console.log(serverResponse))
     .catch((error) => console.warn(error))
+
+    //temporary
+    //clearAsyncStorage;
   }
 
   function getTest(){
@@ -114,23 +148,28 @@ export default function App() {
         var lastElement= users[users.length-1];
         console.log(lastElement);
         //alert(lastElement);
-        var animalCount=lastElement.Animal;
-        var funnyCount=lastElement.Funny;
-        var newsCount=lastElement.News;
-        var politicalCount=lastElement.Political;
+        var obAnimalCount=lastElement.Animal;
+        var obFunnyCount=lastElement.Funny;
+        var obNewsCount=lastElement.News;
+        var obPoliticalCount=lastElement.Political;
 
-        console.log(animalCount);
+        console.log(obAnimalCount);
         //alert(animalCount);
-        console.log(funnyCount);
+        console.log(obFunnyCount);
         //alert(funnyCount);
-        console.log(newsCount);
+        console.log(obNewsCount);
         //alert(newsCount);
-        console.log(politicalCount);
+        console.log(obPoliticalCount);
         //alert(politicalCount);
+        console.log("cookie A:",animalCounter);
+        console.log("cookie F:",funnyCounter);
+        console.log("cookie N:",newsCounter);
+        console.log("cookie P:",politicalCounter);
 
-        postTest(animalCount,funnyCount,newsCount,politicalCount);
+        postTest(obAnimalCount,obFunnyCount,obNewsCount,obPoliticalCount,animalCounter, funnyCounter, newsCounter, politicalCounter);
+        //eraseData;
       })
-    //if not insert the infoformatio into the DB
+    eraseData();
 
   };
 
@@ -218,6 +257,31 @@ export default function App() {
     setNewsCounter(0);
     await AsyncStorage.setItem('@politicalCount', (0).toString());
     setPoliticalCounter(0);
+  }
+  //const eraseData = async () => {
+  async function eraseData(){
+
+    console.log("inside eraseData");
+    /*var cookies = document.cookie.split(";");
+    for (var i = 0; i < cookies.length; i++){
+      eraseCookie(cookies[i].split("=")[0]);
+    }  */
+    /*const animalCountValue = await AsyncStorage.getItem('@animalCount');
+    const animalCount2 = parseInt(animalCountValue);
+    console.log(animalCount2);*/
+    //getTest();
+    
+    //window.localStorage.removeItem('@animalCount');
+    await AsyncStorage.removeItem('@animalCount');
+    await AsyncStorage.removeItem('@funnyCount');
+    await AsyncStorage.removeItem('@newsCount');
+    await AsyncStorage.removeItem('@politicalCount');
+    console.log("done erasing data");
+    //await AsyncStorage.Item('@count', (0).toString());
+    //const countValue = await AsyncStorage.getItem('@animalCount');
+    //const count = parseInt(countValue);
+    //console.log(count);
+
   } 
 
 
@@ -252,6 +316,7 @@ export default function App() {
       //alert('it is political');
       politicalIncrementCounter();
     }
+    
 
   }
 
@@ -287,6 +352,8 @@ export default function App() {
         <Button title="Clear Count" onPress={clearAsyncStorage} />
         <Button title="post test" onPress={()=>postTest()} />
         <Button title="get test" onPress={()=>getTest()} />
+        <Button title="erase test" onPress={eraseData} />
+
 
 
         {/*<View style={styles.divider} />
