@@ -44,7 +44,7 @@ const SignUpScreen = ({navigation}) => {
 
   function getTest(inputEmail,inputPassword,inputFullName){
     //search if either username already in DB
-    console.log(inputEmail,inputPassword);
+    console.log(inputEmail,inputPassword,inputFullName);
     console.log("\n");
     var value = true;
     var tempResponse = {};
