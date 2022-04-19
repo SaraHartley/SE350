@@ -7,3 +7,6 @@ CREATE TABLE `rorrusers` (
   UNIQUE KEY `rorrEmail` (`rorrEmail`),
   UNIQUE KEY `rorrPassword` (`rorrPassword`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4
+
+--To insert a value
+--INSERT INTO rorrusers (rorrEmail,rorrPassword,rorrFullName) values("dog@email.com,","testPass","Bob Jones");
