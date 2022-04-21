@@ -1,0 +1,17 @@
+//installations
+/*
+Node.js
+npm install express
+npm install body-parser
+npm install mysql
+
+//Tabs
+npm install react-native-tab-view
+
+//Table
+npm install react-native-table-component
+  then change its line in dependicies to:
+    "react-native-table-component": "https://github.com/slice312/react-native-table-component.git",
+    run npm install
+
+*/
