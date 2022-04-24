@@ -25,9 +25,10 @@ import { Table, Row, Rows, TableWrapper, Cell} from 'react-native-table-componen
 import { Ionicons } from '@expo/vector-icons';
 //import { SafeAreaView } from 'react-native-safe-area-context';
 import SignUp from './SignUpScreen'
+import SignInScreen from './SignInScreen'
 
 const NewPostScreen = ({navigation}) => {
-  
+
   function getUsersData(){
     //search if either username already in DB
     console.log("inside getUSersData");
@@ -86,73 +87,20 @@ const NewPostScreen = ({navigation}) => {
   }
   async function callSetName(index){
     console.log("inside callSetName");
-    console.log(index);   
-    var item = "";
-    if (setting=="Outdoors"){
-      console.log({setting});
-      if (index == 0){
-        console.log("index is 0");
-        setName("Eat Outside");
-        item = "Eat Outside";
-        getOutdoorsItemData(item);
-      }else if (index == 1){
-        console.log("index is 1");
-        setName("Take Hike");
-        item = "Take Hike";
-        getOutdoorsItemData(item);
-
-      }else if (index == 2){
-        console.log("index is 2");
-        setName("Camp in a Tent");
-        item = "Camp in a Tent";
-        getOutdoorsItemData(item);
-
-      }
-    }else if (setting=="Racing"){
-      console.log({setting});
-      if (index == 0){
-        console.log("index is 0");
-        setName("Autocross");
-        item = "Autocross";
-        getRacingItemData(item);
-      }else if (index == 1){
-        console.log("index is 1");
-        setName("Rallycross");
-        item = "Rallycross";
-        getRacingItemData(item);
-      }else if (index == 2){
-        console.log("index is 2");
-        setName("Street Racing");
-        item = "Street Racing";
-        getRacingItemData(item);
-      }
-
-    }else if (setting=="Helicopter"){
-      console.log({setting});
-      if (index == 0){
-        console.log("index is 0");
-        setName("Bell 206");
-        item = "Bell 206";
-        getHelicopterItemData(item);
-      }else if (index == 1){
-        console.log("index is 1");
-        setName("Bell OH-58 Kiowa");
-        item = "Bell OH-58 Kiowa";
-        getHelicopterItemData(item);
-      }else if (index == 2){
-        console.log("index is 2");
-        setName("Piasecki X-49");
-        item = "Piasecki X-49";
-        getHelicopterItemData(item);
-      }
-    } 
+    console.log(index);  
+    var myVal = (tableData[index]); 
+    console.log(myVal);
+    var myVal2 = myVal[0];
+    console.log(myVal2);
+    setUserChoice(myVal2);
+    
   }
   //const stuff
   const [tweet, setTweet] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [tableHead,setTableHead] = React.useState([]);
   const [tableData,setTableData] = React.useState([[]]);
-  const [setting, setSetting] = React.useState("No choice has been made.");
+  const [userChoice, setUserChoice] = React.useState("No choice has been made.");
 
   const onPostTweet = () => {
     console.log(tweet);
@@ -288,7 +236,6 @@ const NewPostScreen = ({navigation}) => {
     const [index, setIndex] = React.useState(0);
     const SecondRoute = () => (
       <SafeAreaView style={styles.MainContainer}>
-      <Text>{setting}</Text>
         <TouchableOpacity style = {{margin:5}}>
                 <Button
                   color="#ffa500"
@@ -315,13 +262,8 @@ const NewPostScreen = ({navigation}) => {
     );
     const ThirdRoute = () => (
         <SafeAreaView style={styles.MainContainer}>
-        <FlatList
-        data={Music}
-        renderItem={({item})=> <GridView name={item.name} picture={item.picture} price={item.price}/>}
-        keyExtractor={item => item.id}
-        numColumns={1}
-        key={item=> item.id}
-        />
+        <Text>{userChoice}</Text>
+        <Text>Value of Global Variable is: {global.MyVar}</Text>
         </SafeAreaView>
       );
 
