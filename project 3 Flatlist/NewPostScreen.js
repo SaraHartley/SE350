@@ -31,11 +31,14 @@ const NewPostScreen = ({navigation}) => {
   const [imageUrl, setImageUrl] = useState("");
   const [users, setUsers] = useState([]);
   const [emailChoice, setEmailChoice] = useState("No Account Chosen");
+  const [userTweets, setUserTweets] = useState([]);
 
   
   function onPostTweet(inputTweet){
     console.log(inputTweet);
     setTweet(inputTweet);
+    var currentUser = global.MyVar;
+    postTweet(currentUser,inputTweet)
   }
   function getUsers(){
     console.log("inside getUsers");
@@ -48,6 +51,43 @@ const NewPostScreen = ({navigation}) => {
         setUsers(results);
       })
   };
+  function getTweets(){
+    console.log("inside getTweets");
+    var tempArray = [];
+    fetch('http://192.168.254.79:3000/rorrTweets')
+      .then(response => response.json())
+      //.then(users => console.log(users))
+      .then(results => {
+        //console.log(results);
+        for ( var xObject in results){
+          var tempObj =results[xObject];
+          console.log(tempObj);
+          if(emailChoice == tempObj.tweetEmail){
+            tempArray.push(tempObj);
+
+          }       
+        }
+        console.log(tempArray);
+        setUserTweets(tempArray);
+      })
+  };
+  function postTweet(currentUser,inputTweet){
+    console.log("inside postTweet");
+    console.log(currentUser,inputTweet);
+    var initialLikes = 0;
+    var tempArray = [];
+    Axios.post('http://192.168.254.79:3000/newPost',{
+      email: currentUser,
+      content: inputTweet,
+      likes: initialLikes,
+    })
+    .then(function (response) {
+      //console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  };
     
   function callSetUsers(){
     getUsers();
@@ -56,6 +96,7 @@ const NewPostScreen = ({navigation}) => {
   function callSetEmailChoice(email){
       console.log(email);
       setEmailChoice(email);
+      getTweets();
   }
     
   //const navigation = NavigationContainer();
@@ -65,7 +106,7 @@ const NewPostScreen = ({navigation}) => {
   };
 
     
-    const lemonadePic='https://pyxis.nymag.com/v1/imgs/245/4b9/b4496eda47e6c7c641cc7fa774498cab82-25-beyonce-lemonade-cover.rsquare.w700.jpg';
+    const lemonadePic='https://media.discordapp.net/attachments/930280305363943506/954570868388954162/se350logo.jpg';
 
     
     
@@ -79,12 +120,10 @@ const NewPostScreen = ({navigation}) => {
       </View>
     );
     
-    const GridViewPosts=({email})=>(
+    const GridViewPosts=({id, content})=>(
       <View style={styles.gridStyle}>
-        <TouchableOpacity onPress={()=>alert(`${email}`)}>
-        <Text style={styles.gridText}>{email}</Text>
-        <Image source={{uri: lemonadePic}}  
-         style={{width: 50, height: 50}} />  
+        <TouchableOpacity onPress={()=>alert(`${id}`)}>
+        <Text style={styles.gridText}>{content}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -131,7 +170,9 @@ const NewPostScreen = ({navigation}) => {
         {(errors.post && touched.post) &&
                   <Text style={styles.errorText}>{errors.post}</Text>
         }
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+        <TouchableOpacity 
+          style={styles.button} 
+          onPress={handleSubmit}>
           <Text style={styles.buttonText}>Rorr</Text>
         </TouchableOpacity>
         </View>
@@ -165,13 +206,13 @@ const NewPostScreen = ({navigation}) => {
         <Text>{emailChoice}</Text>
         <Text>{tweet}</Text>
 
-        {/*<FlatList
-        data={Music}
-        renderItem={({item})=> <GridViewPosts name={item.name} picture={item.picture} price={item.price}/>}
-        keyExtractor={item => item.id}
+        <FlatList
+        data={userTweets}
+        renderItem={({item})=> <GridViewPosts id={item.tweetId} content={item.tweetContent}/>}
+        keyExtractor={item => item.tweetId}
         numColumns={2}
-        key={item=> item.id}
-        />*/}
+        key={item=> item.tweetId}
+        />
         </SafeAreaView>
       );
     const [index, setIndex] = React.useState(0);
