@@ -62,6 +62,34 @@ app.post('/newUser', function (req, res) {
     });
   });
 });
+app.post('/newPost', function (req, res) {
+  console.log(req.body.email);
+  console.log(req.body.content);
+  console.log(req.body.likes);
+
+  console.log("at post");
+
+  // Connecting to the database.
+  connection.getConnection(function (err, connection) {
+
+  // Checking for errors.
+  if(err) throw err;
+  console.log("Connected!");
+
+    // Executing the MySQL query (select all data from the 'users' table).
+    //connection.query("INSERT INTO users (username) values('Mike')", function (error, results, fields) {
+
+    var email = req.body.email;
+    var content =req.body.content;
+    var likes =req.body.likes;
+    connection.query(`INSERT INTO rorrTweets (tweetEmail,tweetContent,tweetLikes) values("${email}","${content}","${likes}")`, function (error, results, fields) {
+      if (error) throw error;
+      
+      // Getting the 'response' from the database and sending it to our route. This is were the data is.
+      res.send(JSON.stringify(results));
+    });
+  });
+});
 
 
 // Creating a GET route that returns data from the 'users' table.
@@ -100,7 +128,7 @@ app.get('/rorrTweets', function (req, res) {
   connection.getConnection(function (err, connection) {
 
     // Executing the MySQL query (select all data from the 'users' table).
-    connection.query('SELECT * FROM rorrTweets', function (error, results, fields) {
+    connection.query('SELECT tweetId,tweetEmail,tweetContent FROM rorrTweets', function (error, results, fields) {
       // If some error occurs, we throw an error.
       if (error) throw error;
       console.log("connected");
