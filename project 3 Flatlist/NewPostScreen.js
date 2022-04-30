@@ -1,6 +1,4 @@
-//Users\krith\Spring2022\350\project3\p1
-
-///WelcomeScreen.js
+///NewPostScreen.js
 //template from https://blog.logrocket.com/react-native-form-validations-with-formik-and-yup/ and Youtube Channel "Pradip Debnath"
 import React, {useState} from 'react'
 
@@ -22,6 +20,7 @@ import {
 } from 'react-native'
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import { Ionicons } from '@expo/vector-icons';
+import Axios from 'axios';
 //import { SafeAreaView } from 'react-native-safe-area-context';
 import SignUp from './SignUpScreen'
 
@@ -30,56 +29,46 @@ const NewPostScreen = ({navigation}) => {
   const [tweet, setTweet] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [users, setUsers] = useState([]);
+  const [emailChoice, setEmailChoice] = useState("No Account Chosen");
+
   
   const onPostTweet = () => {
     console.log(tweet);
     console.log(imageUrl);
   }
   function getUsers(){
-    //search if either username already in DB
     console.log("inside getUsers");
-    console.log("\n");
-    var value = true;
-    var tempResponse = {};
-    fetch('http://192.168.50.93:3000/rorrUsers2')
+    var tempArray = [];
+    fetch('http://192.168.254.79:3000/rorrUsers2')
       .then(response => response.json())
-      //.then(users => console.log())
-      .then(users => {
-        var count = 0;
-        //setTableData([]);
-        const tempArray = [];
-        var tempHeadArray =[];
-        for (var xObject in users){
-          count++;
+      //.then(users => console.log(users))
+      .then(results => {
+        console.log(results);
+        setUsers(results);
+
+        
+
+        /*for ( var xObject in users){
           var tempObj =users[xObject];
           console.log("\n");
           console.log(tempObj);
-
-          tempArray.push({id: count, rorrEmail: tempObj.rorrEmail});
-          console.log(typeof tempObj.rorrEmail); //string
-          console.log(typeof tempArray); //object
-          console.log(typeof tempObj); //object
-          //console.log(tempArray); 
-          //console.log(Music);
-          //console.log(users);         
-          //setUsers(tempArray);
-          //set table data
-          // if (item == tempObj.racingName){
-          //   var tempVal = tempObj.racingImage;
-          //   console.log(tempVal);
-          //   setItemImage(tempVal);
-          //   var tempVal2 = tempObj.racingDescription;
-          //   console.log(tempVal2);
-          //   setItemDescription(tempVal2); 
-            
-          //}
-        }      
+          tempArray.push(tempObj);
+        }
+        console.log("\n");
+        console.log("After for loop");
+        console.log(tempArray);
+        setUsers(tempArray);*/
       })
   };
+    
   function callSetUsers(){
-    alert('hello');
     getUsers();
-    }
+    console.log(users);
+  }
+  function callSetEmailChoice(email){
+      console.log(email);
+      setEmailChoice(email);
+  }
     
   //const navigation = NavigationContainer();
 
@@ -117,7 +106,17 @@ const NewPostScreen = ({navigation}) => {
         price: 16,
       },
     ]
-    const GridView=({email})=>(
+    const GridViewUsers=({email})=>(
+      <View style={styles.gridStyle}>
+        <TouchableOpacity onPress={()=>callSetEmailChoice(email)}>
+        <Text style={styles.gridText}>{email}</Text>
+        <Image source={{uri: lemonadePic}}  
+         style={{width: 50, height: 50}} />  
+        </TouchableOpacity>
+      </View>
+    );
+    
+    const GridViewPosts=({email})=>(
       <View style={styles.gridStyle}>
         <TouchableOpacity onPress={()=>alert(`${email}`)}>
         <Text style={styles.gridText}>{email}</Text>
@@ -126,7 +125,6 @@ const NewPostScreen = ({navigation}) => {
         </TouchableOpacity>
       </View>
     );
-    
     const layout = useWindowDimensions();
     const FirstRoute = () => (
       <SafeAreaView style={styles.container2}>
@@ -170,32 +168,31 @@ const NewPostScreen = ({navigation}) => {
     
     const SecondRoute = () => (
       <SafeAreaView style={styles.MainContainer}>
-        <Text>{users}</Text>
-        <TouchableOpacity>
-        <Button  color="#ffa500"
-                  title="Refresh Screen"
-                  onPress={()=> callSetUsers()} 
+        <Button  
+          color="#ffa500"
+          title="Refresh Screen"
+          onPress={()=> callSetUsers()} 
        />
-       </TouchableOpacity>
       <FlatList
       data={users}
-      renderItem={({item})=> <GridView email={item.rorrEmail}/>}
-      keyExtractor={item => item.id}
+      renderItem={({item})=> <GridViewUsers email={item.rorrEmail}/>}
+      keyExtractor={(item) => item.rorrId}
       numColumns={1}
-      key={item=> item.id}
+      key={item=> item.rorrId}
       />
       </SafeAreaView>
     );
 
     const ThirdRoute = () => (
         <SafeAreaView style={styles.MainContainer}>
-        <FlatList
+        <Text>{emailChoice}</Text>
+        {/*<FlatList
         data={Music}
-        renderItem={({item})=> <GridView name={item.name} picture={item.picture} price={item.price}/>}
+        renderItem={({item})=> <GridViewPosts name={item.name} picture={item.picture} price={item.price}/>}
         keyExtractor={item => item.id}
         numColumns={2}
         key={item=> item.id}
-        />
+        />*/}
         </SafeAreaView>
       );
     const [index, setIndex] = React.useState(0);
@@ -257,7 +254,7 @@ const styles = StyleSheet.create({
     flex:1,
     justifyContent:'center',
     alignItems:'center',
-    height: 80,
+    height: 100,
     margin: 2,
     backgroundColor: '#00C853'
   },
