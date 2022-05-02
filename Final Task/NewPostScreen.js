@@ -184,9 +184,20 @@ const NewPostScreen = ({navigation}) => {
       console.log("calling other stuff: ",newTempArray);
       for(var item in newTempArray){
         var tempObj = newTempArray[item];
-        console.log(tempObj);
         var id = tempObj.itemId;
-        console.log(id);
+        var numLikes;
+        for (var item2 in results){
+          tempTweetId = (results[item2]).tweetId;
+          console.log(tempTweetId);
+          if (id == tempTweetId){
+            numLikes = (results[item2]).tweetLikes;
+            console.log("numLikes",numLikes);
+          }
+
+        }
+			  var newNumLikes = numLikes + 1;
+        console.log("newNumLikes: ",newNumLikes);
+        postLikes(id,newNumLikes);
       }
       removeValue();
     }else{
@@ -202,6 +213,21 @@ const NewPostScreen = ({navigation}) => {
         //setDbLikes(results);
         callPostCookieData(results);
       })
+  };
+
+  function postLikes(inputId,inputLikes){
+    console.log("inside postLikes");
+    console.log(inputId,inputLikes);
+    Axios.post('http://192.168.254.79:3000/updateLikes',{
+      id: inputId,
+      likes: inputLikes,
+    })
+    .then(function (response) {
+      //console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
   };
 
 
