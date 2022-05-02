@@ -115,6 +115,9 @@ const NewPostScreen = ({navigation}) => {
 
   //Cookie stuff
   const getData = async(keyid)=>{
+    console.log("dbLikes before: ",dbLikes)
+    getLikesData();
+    console.log("dbLikes after: ",dbLikes);
     console.log("inside getData");
     const product = { 'itemId' : keyid};
     const existingProducts = await AsyncStorage.getItem('products');
@@ -180,7 +183,8 @@ const NewPostScreen = ({navigation}) => {
     var tempArray = await AsyncStorage.getItem('products');
     var newTempArray = JSON.parse(tempArray);
     if (newTempArray != null){
-      console.log("calling other stuff",newTempArray);
+      console.log("calling other stuff: ",newTempArray);
+      console.log("dbLikes after: ",dbLikes);
       for(var item in newTempArray){
         var tempObj = newTempArray[item];
         console.log(tempObj);
@@ -190,6 +194,16 @@ const NewPostScreen = ({navigation}) => {
       console.log("array is null",newTempArray)
     }
   }
+  function getLikesData(){
+    console.log("inside getLikesData");
+    fetch('http://192.168.254.79:3000/tweetLikes')
+      .then(response => response.json())
+      //.then(users => console.log(users))
+      .then(results => {
+        console.log("results in getLikesData: ",results);
+        setDbLikes(results);
+      })
+  };
 
 
 //Return stuff
