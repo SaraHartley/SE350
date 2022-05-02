@@ -1,7 +1,7 @@
 ///NewPostScreen.js
 //template from https://blog.logrocket.com/react-native-form-validations-with-formik-and-yup/ and Youtube Channel "Pradip Debnath"
 //https://medium.com/featurepreneur/asyncstorage-in-react-native-with-expo-ff82a3496c9f
-import React, {useState} from 'react'
+import React, {useRef,useState,useEffect} from 'react'
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { NavigationContainer } from '@react-navigation/native';
@@ -18,7 +18,8 @@ import {
   useWindowDimensions, 
   Image,
   FlatList, 
-  TouchableOpacity
+  TouchableOpacity,
+  AppState
 } from 'react-native'
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import { Ionicons } from '@expo/vector-icons';
@@ -34,6 +35,7 @@ const NewPostScreen = ({navigation}) => {
   const [users, setUsers] = useState([]);
   const [emailChoice, setEmailChoice] = useState("No Account Chosen");
   const [userTweets, setUserTweets] = useState([]);
+  const [dbLikes, setDbLikes] = useState([]);
 
   
   function onPostTweet(inputTweet){
@@ -111,57 +113,76 @@ const NewPostScreen = ({navigation}) => {
     const lemonadePic='https://media.discordapp.net/attachments/930280305363943506/954570868388954162/se350logo.jpg';
 
   //Cookie stuff
-  async function onLike(newId){
-    console.log("inside onLike");
-    console.log(newId);
-    //getData content
-    var result =[];
+  const getData = async(keyid)=>{
+    console.log("inside getData");
+    const product = { 'itemId' : keyid};
+    const existingProducts = await AsyncStorage.getItem('products');
+    let newProduct = JSON.parse(existingProducts);
+    if( !newProduct ){
+      newProduct = [];
+    }
+    newProduct.push( product);
+    await AsyncStorage.setItem('products', JSON.stringify(newProduct) )
+      .then( ()=>{
+      console.log('It was saved successfully');
+      } )
+      .catch( ()=>{
+      console.log('There was an error saving the product');
+      } )
+
+    //await AsyncStorage.setItem( "mykey", "myValue");
+    console.log(await AsyncStorage.getItem('products'));
+
+  }
+  const removeValue = async () => {
     try {
-      const jsonValue = await AsyncStorage.getItem('@idArray')
-      result = jsonValue != null ? JSON.parse(jsonValue) : null;
+      await AsyncStorage.removeItem('products')
     } catch(e) {
-      // error reading value
-      console.log(e);
+      // remove error
     }
-    if (result == null){
-      result = [];
-    }
-    //result.push(newId);
-    console.log(typeof result);
-    //storeData content, use result as the object to get storeData
-    try {
-      const jsonValue = JSON.stringify(result)
-      await AsyncStorage.setItem('@idArray', jsonValue)
-    } catch (e) {
-      // saving error
-      console.log(e);
+    console.log('Done.')
+  }
+
+  const appState = useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
+
+  useEffect(() => {
+    //temporary
+    console.log("inside useEffect");
+    
+    const subscription = AppState.addEventListener("change", nextAppState => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === "active"
+      ) {
+        console.log("App has come to the foreground!");
+        
+      }
+
+      appState.current = nextAppState;
+      setAppStateVisible(appState.current);
+      console.log("AppState", appState.current);
+      if (appState.current.match(/inactive|background/))
+      {
+        console.log("send data here");
+        callPostCookieData();
+
+      }
+    });
+  }, []);
+
+  async function callPostCookieData(){
+    console.log("inside callPostCookieData");
+    var tempArray = await AsyncStorage.getItem('products');
+    if (tempArray != null){
+      console.log("calling other stuff",tempArray);
+    }else{
+      console.log("array is null",tempArray)
     }
   }
-  
-  //store cookie object value
-  const storeData = async (id) => {
-    console.log("inside storedata");
-    try {
-      const jsonValue = JSON.stringify(id)
-      var tempArray =[];
-      tempArray.push(id);
-      console.log("temparray: ", tempArray);      
-      await AsyncStorage.setItem('@idArray', tempArray)
-    } catch (e) {
-      // saving error
-      console.log(e);
-    }
-  }
-  //read cookie object value
-  const getData = async () => {
-    try {
-      const jsonValue = await AsyncStorage.getItem('@idArray')
-      console.log("result: ",jsonValue != null ? jsonValue : null);
-    } catch(e) {
-      // error reading value
-      console.log(e);
-    }
-  }
+
+
+//Return stuff
     
     const GridViewUsers=({email})=>(
       <View style={styles.gridStyle}>
@@ -175,7 +196,7 @@ const NewPostScreen = ({navigation}) => {
     
     const GridViewPosts=({id, content})=>(
       <View style={styles.gridStyle}>
-        <TouchableOpacity onPress={()=>storeData(id)}>
+        <TouchableOpacity onPress={()=>getData(id)}>
         <Text style={styles.gridText}>{content}</Text>
         </TouchableOpacity>
       </View>
@@ -259,10 +280,15 @@ const NewPostScreen = ({navigation}) => {
         <Text>Tweets for {emailChoice}</Text>
         <Text>{}</Text>
         <Button
-          onPress={getData}
-          title="Learn More"
+          onPress={()=>getData(5)}
+          title="add item"
           color="#841584"
-          />
+        />
+        <Button
+          onPress={()=>removeValue()}
+          title="remove item"
+          color="#841584"
+        />
         <FlatList
         data={userTweets}
         renderItem={({item})=> <GridViewPosts id={item.tweetId} content={item.tweetContent}/>}
