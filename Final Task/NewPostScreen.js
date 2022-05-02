@@ -1,6 +1,7 @@
 ///NewPostScreen.js
 //template from https://blog.logrocket.com/react-native-form-validations-with-formik-and-yup/ and Youtube Channel "Pradip Debnath"
 //https://medium.com/featurepreneur/asyncstorage-in-react-native-with-expo-ff82a3496c9f
+//https://medium.com/@luisbajana/saving-objects-using-asyncstorage-2d8696275667
 import React, {useRef,useState,useEffect} from 'react'
 import { Formik } from 'formik';
 import * as yup from 'yup';
@@ -169,15 +170,24 @@ const NewPostScreen = ({navigation}) => {
 
       }
     });
+    return () => {
+      subscription.remove();
+    };
   }, []);
 
   async function callPostCookieData(){
     console.log("inside callPostCookieData");
     var tempArray = await AsyncStorage.getItem('products');
-    if (tempArray != null){
-      console.log("calling other stuff",tempArray);
+    var newTempArray = JSON.parse(tempArray);
+    if (newTempArray != null){
+      console.log("calling other stuff",newTempArray);
+      for(var item in newTempArray){
+        var tempObj = newTempArray[item];
+        console.log(tempObj);
+      }
+      removeValue();
     }else{
-      console.log("array is null",tempArray)
+      console.log("array is null",newTempArray)
     }
   }
 
